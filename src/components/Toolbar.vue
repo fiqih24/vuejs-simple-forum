@@ -3,8 +3,8 @@
     <v-app-bar-nav-icon></v-app-bar-nav-icon>
     <v-toolbar-title>Forum LiuFiq</v-toolbar-title>
     <v-spacer></v-spacer>
-
-    <div v-for="item in items">
+    <app-notification></app-notification>
+    <div class="hidden-sm-and-down" v-for="item in items">
         <router-link v-bind:to="item.to" v-if="item.show==true">
             <v-btn text>{{ item.title }}</v-btn>
         </router-link>
@@ -13,8 +13,12 @@
 </template>
 
 <script>
+import AppNotification from './AppNotification';
 export default {
  name:'Toolbar',
+ components:{
+     AppNotification
+ },
  data(){
      return{
          items:[

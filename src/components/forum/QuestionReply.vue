@@ -1,34 +1,56 @@
 <template>
-<div>
+    <div>
     <v-container fluid grid-list-md>
-    <v-layout >
-     <v-flex xs6 v-for="reply in replies">
-        <v-card >
-        <v-card-title>{{ reply.user }}</v-card-title>
-        <v-card-text>{{ reply.reply }}</v-card-text>
-        <v-card-actions>
-        <v-btn text>{{ reply.created_at }}</v-btn>
-        </v-card-actions>
-    </v-card>
-  </v-flex>
-  </v-layout>
-  </v-container>
-  </div>
+    <v-layout wrap row>
+    <v-container>
+     <reply v-for="(reply,index) in repliesComputed" :key="index" :index="index" :slug="slug" :data="reply"></reply>
+    </v-container>
+     <ReplyForm :slug="slug" />
+    </v-layout>
+    </v-container>
+    
+    </div>
 </template>
 
 <script>
+import Reply from './Reply';
+import ReplyForm from './ReplyForm';
 export default {
-    props:['slug'],
+    props:['replie','slug'],
+    components:{
+        Reply,ReplyForm
+    },
     data(){
-        return{
-            replies:{}
+        return{           
+           repliess:null,
         }
     },
+    computed:{
+        repliesComputed(){
+            this.repliess = this.replie
+            return this.repliess
+        }
+    },
+    methods:{
+        listen(){
+            EventBus.$on('newReply',(res) =>{
+               this.replie.push(res)
+            })
+            EventBus.$on('deleteReply',(index) =>{                          
+               this.axios.delete('http://127.0.0.1:8000/api/question/'+this.slug+'/reply/'+this.replie[index].id)
+                .then(res => alert('berhasil dihapus'))                           
+                .catch(err => console.log(err.response.data))
+              this.replie.splice(index,1);
+            })
+            EventBus.$on('updateReply',(reply)=>{
+                this.replie[reply.index] = reply.data;       
+                this.$forceUpdate();         
+             })
+        },
+       
+    },    
     created(){
-        const url = 'http://udemy-course.asd/api/question/'+this.slug+'/reply';
-        this.axios.get(url)
-        .then(res => this.replies = res.data.data)
-        .catch(err => console.log(err.response.data))
+        this.listen()
     }
 }
 </script>

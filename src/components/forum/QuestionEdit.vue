@@ -1,6 +1,6 @@
 <template>
     <v-container fluid grid-list-md>
-     <v-form @submit.prevent="create()">    <v-layout row wrap>
+     <v-form @submit.prevent="update()">    <v-layout row wrap>
            
             <v-flex md12>
                 <v-text-field
@@ -9,20 +9,11 @@
                     required
                 ></v-text-field>
             </v-flex>
-            <v-flex md12 d-flex>
-              
-                    <v-select                   
-                    :items="categories"
-                    item-value="id"
-                    item-text="name"
-                    v-model="form.category_id"
-                    label="Category"
-                    autocomplete=""></v-select>                
-            </v-flex>
             <v-flex md12>
                 <vue-simplemde v-model="form.body" ref="markdownEditor" />
             </v-flex>
-            <v-btn color="green" type="submit">POST</v-btn>
+            <v-btn color="green" type="submit">Simpan</v-btn>
+            <v-btn color="yellow" @click="cancel"> Batalkan</v-btn>
             
         </v-layout></v-form>
     </v-container>
@@ -31,6 +22,7 @@
 <script>
  import VueSimplemde from 'vue-simplemde'
 export default {
+    props:['slug'],
     components: {
       VueSimplemde
     },
@@ -38,26 +30,33 @@ export default {
         return{
             form:{
                 title:null,
-                category_id:null,
+                category:null,
                 body:null,
             },
          categories:{}   
         }
     },
     created(){       
-        this.showCategory();
-        user.isLogin();
+        // user.isLogin();
+       this.showDetail();
     },
-    methods:{
-        create(){             
-             this.axios.post('http://127.0.0.1:8000/api/question/',this.form)
-            .then(res => this.$router.push({name:'question-detail',params:{slug:res.data}}) )
+    methods:{        
+        update(){             
+             this.axios.put('http://127.0.0.1:8000/api/question/'+this.slug,this.form)
+            .then(function(res){
+               location.reload();
+            })
             .catch(err => console.log(err.response.data) )
         },
-        showCategory(){
-            this.axios.get('http://udemy-course.asd/api/category')
-            .then(res => this.categories = res.data.data )
+        showDetail(){
+             this.axios.get('http://127.0.0.1:8000/api/question/'+this.slug)
+            .then(res => this.form = res.data.data)
+            .catch(err => console.log(err.response.data.data))
+        },
+        cancel(){
+            EventBus.$emit('cancelEdit')
         }
+        
     }
 
 }

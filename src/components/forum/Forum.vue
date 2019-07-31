@@ -5,20 +5,21 @@
               <Question v-for="question in questions" 
                 :key="question.slug"
                 :data=question
-              style="margin-bottom:5px"></Question>
+              class="mt-2"></Question>
             </v-flex>
-            sidebar
-            
+            <v-flex xs4>
+                <app-sidebar></app-sidebar>
+            </v-flex>
         </v-layout>
     </v-container>
 </template>
 
 <script>
 import Question from './Question';
-
+import AppSidebar from './AppSidebar';
 export default {
 components: {
-    Question
+    Question,AppSidebar
 },
 data(){
     return{
@@ -29,7 +30,10 @@ created(){
     this.axios.get('http://udemy-course.asd/api/question')
     .then(res => this.questions = res.data.data )
     .catch(error => alert('periksa koneksi anda'))
-}
+},
+    
+    
+
 }
 </script>
 

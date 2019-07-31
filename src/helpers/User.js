@@ -39,6 +39,13 @@ import Token from './Token';
         }
         return false
     }
+    isLogin(){
+        const token_tersimpan = AppStorage.getToken();
+        axios.post('http://udemy-course.asd/api/auth/me')
+        .then(res => console.log(res) )
+        .catch(err => this.logout())
+    }
+
     loggedIn(){
        
         return this.hasToken();
@@ -62,6 +69,9 @@ import Token from './Token';
         if(this.loggedIn()){
           return AppStorage.getToken();           
         }
+    }
+    own(id){
+        return this.id() == id ? true : false;
     }
 }
 export default User = new User();
